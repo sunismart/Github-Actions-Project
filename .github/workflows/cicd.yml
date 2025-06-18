@@ -147,5 +147,32 @@ jobs:
       - name: Deploy to EKS
         run: |
           kubectl apply -f ds.yml
+
+      - name: Check deployment status
+        run: |
+          echo "=== Checking Deployments ==="
+          kubectl get deployments -A
+          echo -e "\n=== Checking Pods ==="
+          kubectl get pods -A
+          echo -e "\n=== Checking Services ==="
+          kubectl get services -A
+          echo -e "\n=== Checking Load Balancer Details ==="
+          kubectl get services -o wide
+          echo -e "\n=== Checking Events ==="
+          kubectl get events --sort-by=.metadata.creationTimestamp
       
+      - name: Troubleshoot Load Balancer
+        run: |
+          echo "=== Load Balancer Troubleshooting ==="
+          echo "Checking if AWS Load Balancer Controller is installed..."
+          kubectl get deployment -n kube-system aws-load-balancer-controller || echo "AWS Load Balancer Controller not found"
+          
+          echo -e "\nChecking service details..."
+          kubectl describe services
+          
+          echo -e "\nChecking target groups (if any)..."
+          aws elbv2 describe-target-groups --region ap-south-1 || echo "No target groups found or error occurred"
+          
+          echo -e "\nChecking load balancers..."
+          aws elbv2 describe-load-balancers --region ap-south-1 || echo "No load balancers found or error occurred"
      
