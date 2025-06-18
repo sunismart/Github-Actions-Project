@@ -139,7 +139,7 @@ jobs:
       
       - name: Update kubeconfig for EKS
         run: |
-          aws eks update-kubeconfig --region ap-south-1 --name sunil
+          aws eks update-kubeconfig --region ap-south-1 --name sunil-cluster
       
       - name: Verify kubectl connection
         run: kubectl get nodes
